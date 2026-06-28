@@ -134,7 +134,7 @@
   }
 
   body {
-    background: var(--cloud);
+    background: var(--deep-teal);
   }
 
   h1, h2 {
@@ -257,10 +257,12 @@
 
   /* ============ SLIDE 2: THE PROBLEM ============ */
   .problem-slide {
+    background: var(--cloud);
     justify-content: center;
     gap: 56px;
     padding: 100px 160px;
     overflow: hidden;
+    border-left: 6px solid var(--mint);
   }
 
   .problem-slide h2 {
@@ -290,6 +292,7 @@
 
   /* ============ SLIDE 3: THE COST ============ */
   .cost-slide {
+    background: linear-gradient(135deg, var(--cloud) 0%, color-mix(in srgb, var(--mint) 12%, var(--cloud)) 100%);
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -329,8 +332,8 @@
     font-family: var(--font-display);
     font-size: 650px;
     font-weight: 600;
-    color: var(--mint);
-    opacity: 0.04;
+    color: var(--deep-teal);
+    opacity: 0.03;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -339,7 +342,16 @@
   }
 
   /* ============ SLIDE 4 & 5: SERVICES ============ */
-  .services-slide-1, .services-slide-2 {
+  .services-slide-1 {
+    background: var(--cloud);
+    padding: 100px 140px;
+    justify-content: center;
+    gap: 56px;
+    overflow: hidden;
+  }
+
+  .services-slide-2 {
+    background: linear-gradient(180deg, var(--cloud) 0%, color-mix(in srgb, var(--mint) 8%, var(--cloud)) 100%);
     padding: 100px 140px;
     justify-content: center;
     gap: 56px;
@@ -376,7 +388,7 @@
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, var(--mint), color-mix(in srgb, var(--mint) 20%, transparent));
+    background: linear-gradient(90deg, var(--mint), var(--deep-teal));
   }
 
   .service-card h3 {
@@ -415,6 +427,7 @@
 
   /* ============ SLIDE 6: HOW IT WORKS ============ */
   .process-slide {
+    background: var(--cloud);
     padding: 100px 160px;
     justify-content: center;
     gap: 64px;
@@ -456,7 +469,7 @@
     font-family: var(--font-display);
     font-size: 52px;
     font-weight: 600;
-    color: var(--mint);
+    color: var(--deep-teal);
     line-height: 1;
   }
 
@@ -476,6 +489,7 @@
 
   /* ============ SLIDE 7: WHY GHOST CAT ============ */
   .why-slide {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--mint) 6%, var(--cloud)) 0%, var(--cloud) 100%);
     padding: 100px 160px;
     justify-content: center;
     gap: 56px;
@@ -511,8 +525,8 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    border: 2px solid var(--mint);
-    background: color-mix(in srgb, var(--mint) 12%, transparent);
+    border: 2px solid var(--deep-teal);
+    background: color-mix(in srgb, var(--mint) 25%, transparent);
   }
 
   .why-slide li strong {
@@ -528,7 +542,7 @@
     height: 200px;
     border: 1.5px solid var(--mint);
     border-radius: 50%;
-    opacity: 0.1;
+    opacity: 0.15;
   }
 
   .why-slide .why-deco-sm {
@@ -537,13 +551,14 @@
     right: 200px;
     width: 50px;
     height: 50px;
-    border: 1.5px solid var(--mint);
+    background: var(--mint);
     border-radius: 50%;
-    opacity: 0.18;
+    opacity: 0.12;
   }
 
   /* ============ SLIDE 8: PROOF ============ */
   .proof-slide {
+    background: var(--cloud);
     padding: 100px 140px;
     justify-content: center;
     gap: 48px;
@@ -577,7 +592,7 @@
     right: 0;
     width: 100px;
     height: 100px;
-    background: radial-gradient(circle at bottom right, color-mix(in srgb, var(--mint) 12%, transparent), transparent 70%);
+    background: radial-gradient(circle at bottom right, color-mix(in srgb, var(--mint) 15%, transparent), transparent 70%);
     pointer-events: none;
   }
 
@@ -722,6 +737,7 @@
 
   /* ============ SLIDE 10: CTA + EMBEDDED FORM ============ */
   .cta-slide {
+    background: var(--cloud);
     flex-direction: row;
     align-items: stretch;
     padding: 60px 100px;
@@ -807,7 +823,7 @@
 
 <!-- NAV DOTS -->
 <div class="nav-dots" id="navDots"></div>
-<div class="keyboard-hint">← → or swipe to navigate</div>
+<div class="keyboard-hint">← → / scroll / swipe to navigate</div>
 
 <!-- SLIDE 1: Title -->
 <section class="slide title-slide">
@@ -973,6 +989,7 @@
 const slides = document.querySelectorAll('.slide');
 const navDotsContainer = document.getElementById('navDots');
 let current = 0;
+let scrollCooldown = false;
 
 // Create nav dots
 slides.forEach((_, i) => {
@@ -1017,18 +1034,46 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// Scroll to advance
+window.addEventListener('wheel', (e) => {
+  if (scrollCooldown) return;
+  scrollCooldown = true;
+  if (e.deltaY > 0) next();
+  else if (e.deltaY < 0) prev();
+  setTimeout(() => { scrollCooldown = false; }, 600);
+}, { passive: true });
+
 // Touch swipe
 let touchStartX = 0;
-document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+let touchStartY = 0;
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+});
 document.addEventListener('touchend', (e) => {
-  const diff = touchStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 50) { diff > 0 ? next() : prev(); }
+  const diffX = touchStartX - e.changedTouches[0].clientX;
+  const diffY = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    diffX > 0 ? next() : prev();
+  } else if (Math.abs(diffY) > 50) {
+    diffY > 0 ? next() : prev();
+  }
 });
 
 // Init
 scaleSlides();
 window.addEventListener('resize', scaleSlides);
 slides[0].classList.add('active');
+
+// Listen for form submission redirect
+window.addEventListener('message', (e) => {
+  if (e.origin === 'https://forms.clickup.com') {
+    // Redirect after form submission
+    setTimeout(() => {
+      window.location.href = 'https://www.ghostcatconsulting.com/';
+    }, 1500);
+  }
+});
 
 // Particles
 const canvas = document.getElementById('particles');
